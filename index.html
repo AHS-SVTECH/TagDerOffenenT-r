@@ -34,7 +34,7 @@
             display: flex; flex-direction: column;
         }
 
-        /* --- HINTERGRUND EFFEKTE --- */
+        /* --- BACKGROUND --- */
         .ambient {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 50% 50%, rgba(0,122,255,0.1), transparent 60%);
@@ -73,7 +73,7 @@
             align-content: center;
         }
 
-        /* CARD DESIGN */
+        /* CARD STYLING */
         .card {
             background: var(--glass);
             border-radius: 35px;
@@ -90,18 +90,18 @@
         .card:hover { transform: translateY(-12px) scale(1.03); z-index: 10; }
         .card:active { transform: scale(0.97); }
 
-        /* Animation Classes */
+        /* Animations */
         .anim-neon { animation: neonFlash 2s ease; }
         .anim-bounce { animation: bounce 1s ease; }
-        
-        @keyframes neonFlash {
-            0% { border-color: transparent; box-shadow: var(--shadow); }
-            50% { border-color: var(--neon-blue); box-shadow: 0 0 60px var(--neon-blue); }
-            100% { border-color: transparent; box-shadow: var(--shadow); }
-        }
-        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-15px);} }
+        .anim-pulse { animation: deepPulse 1s ease; }
+        .anim-glow { animation: borderGlow 2s ease; }
 
-        /* Bilder in Kacheln */
+        @keyframes neonFlash { 0% { border-color: transparent; box-shadow: var(--shadow); } 50% { border-color: var(--neon-blue); box-shadow: 0 0 60px var(--neon-blue); } 100% { border-color: transparent; box-shadow: var(--shadow); } }
+        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-15px);} }
+        @keyframes deepPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes borderGlow { 0% { border-color: var(--primary); } 50% { border-color: var(--neon-blue); } 100% { border-color: var(--primary); } }
+
+        /* Images in Cards */
         .logo-box {
             height: 120px; width: 100%;
             display: flex; align-items: center; justify-content: center;
@@ -116,7 +116,7 @@
         .card h3 { font-size: 1.9rem; margin-bottom: 10px; color: #222; font-weight: 800; }
         .card p { font-size: 1.2rem; color: #666; line-height: 1.4; font-weight: 500; }
 
-        /* Fabi & Leon Breit */
+        /* Fabi & Leon Card */
         .card-fabi {
             grid-column: span 2;
             background: linear-gradient(120deg, #ffffff 0%, #f0f7ff 100%);
@@ -153,7 +153,7 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* INFO BOX (Ausführliche Texte) */
+        /* INFO BOX */
         .explain-box {
             background: white; padding: 35px; border-radius: 25px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.06); margin-bottom: 35px;
@@ -162,8 +162,6 @@
         }
         .explain-box h3 { margin-bottom: 15px; color: var(--primary); font-size: 1.8rem; }
         .explain-box p { color: #444; line-height: 1.7; margin-bottom: 15px; font-size: 1.2rem; }
-        .explain-box ul { margin-left: 25px; margin-bottom: 15px; }
-        .explain-box li { font-size: 1.2rem; margin-bottom: 10px; color: #555; }
 
         /* UNTIS TABLE */
         .untis-wrapper { width: 100%; max-width: 1400px; overflow-x: auto; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); padding: 15px; }
@@ -188,28 +186,15 @@
         .u-room { font-weight: bold; color: #444; font-size: 0.9rem; margin-top: 5px; float: right; }
         .cancelled { text-decoration: line-through; opacity: 0.6; }
 
-        /* SOCIAL MEDIA LAYOUT (RSS + QR) */
-        .social-layout { 
-            display: flex; gap: 30px; width: 100%; max-width: 1500px; height: 100%; min-height: 600px;
-        }
+        /* SOCIAL & FABI LAYOUTS */
+        .social-layout { display: flex; gap: 30px; width: 100%; max-width: 1500px; height: 100%; min-height: 600px; }
+        .rss-frame { flex: 3; background: white; border-radius: 20px; border: 2px solid #eee; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         
-        .rss-frame { 
-            flex: 3; /* Großteil des Platzes */
-            background: white; border-radius: 20px; border: 2px solid #eee; overflow: hidden; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .qr-sidebar { 
-            flex: 1; /* Rechte Spalte */
-            display: flex; flex-direction: column; gap: 20px; 
-            min-width: 300px;
-        }
-
+        .qr-sidebar { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 300px; }
         .qr-card { 
             background: white; border-radius: 20px; padding: 20px; text-align: center; 
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid transparent;
-            cursor: pointer; transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid transparent; cursor: pointer; transition: 0.3s;
         }
         .qr-card:hover { transform: translateX(-10px); border-color: var(--primary); }
         .qr-card img { height: 110px; width: 110px; object-fit: contain; }
@@ -217,13 +202,10 @@
         .qr-text h4 { font-size: 1.4rem; color: #333; margin-bottom: 5px; }
         .qr-text span { background: #eee; padding: 5px 12px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; }
 
-        /* FABI MODAL LAYOUT */
         .fabi-container { text-align: center; width: 100%; max-width: 1000px; }
-        .fabi-qr-box { 
-            background: white; padding: 40px; border-radius: 30px; display: inline-block; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1); margin-bottom: 30px;
-        }
+        .fabi-qr-box { background: white; padding: 40px; border-radius: 30px; display: inline-block; box-shadow: 0 20px 50px rgba(0,0,0,0.1); margin-bottom: 30px; }
         .fabi-qr-box img { width: 300px; height: 300px; }
+        
         .fabi-toggle-btn {
             background: var(--primary); color: white; border: none; padding: 15px 40px;
             font-size: 1.3rem; font-weight: bold; border-radius: 50px; cursor: pointer;
@@ -231,11 +213,10 @@
         }
         .fabi-toggle-btn:hover { transform: scale(1.05); }
 
-        /* FULL IFRAME */
         .full-iframe { width: 100%; height: 100%; border: none; }
         .embed-container { width: 100%; height: 700px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15); margin-top: 20px; border: 2px solid #eee; }
 
-        /* TIMEOUT */
+        /* TIMEOUT OVERLAY */
         .timeout-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 2000;
@@ -323,9 +304,10 @@
         </div>
     </main>
 
+
     <div id="modal-untis" class="modal">
         <div class="modal-header">
-            <h2 data-i18n="m_untis_h">📅 WebUntis</h2>
+            <h2><img id="img-mod-untis" src="" style="height:50px;"> <span data-i18n="m_untis_h">WebUntis</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-content">
@@ -388,7 +370,7 @@
 
     <div id="modal-taskcards" class="modal">
         <div class="modal-header">
-            <h2 data-i18n="m_tc_h">📌 TaskCards</h2>
+            <h2><img id="img-mod-tc" src="" style="height:50px;"> <span data-i18n="m_tc_h">TaskCards</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-content">
@@ -405,7 +387,7 @@
 
     <div id="modal-sdui" class="modal">
         <div class="modal-header">
-            <h2 data-i18n="m_sdui_h">💬 Sdui</h2>
+            <h2><img id="img-mod-sdui" src="" style="height:50px;"> <span data-i18n="m_sdui_h">Sdui</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-content">
@@ -414,7 +396,7 @@
                 <p data-i18n="exp_sdui_t1">Wir verzichten auf WhatsApp-Gruppen. Sdui ist unser offizieller Messenger für Eltern, Schüler und Lehrer. Hierüber laufen Elternbriefe, Krankmeldungen und wichtige Infos.</p>
                 <p data-i18n="exp_sdui_t2">Besonders toll: Nachrichten werden automatisch in Ihre Muttersprache übersetzt! Außerdem sind keine privaten Telefonnummern sichtbar.</p>
             </div>
-            <div style="width:100%; max-width:1000px; height:600px; border-radius:20px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.1);">
+            <div class="embed-container" style="height:500px; max-width:900px;">
                 <iframe id="iframe-sdui" class="full-iframe" src=""></iframe>
             </div>
         </div>
@@ -432,27 +414,25 @@
             </div>
 
             <div class="fabi-container">
-                <div id="fabi-qr-view">
-                    <div class="fabi-qr-box">
-                        <img id="img-fabi-modal-qr" src="">
-                        <h3 style="margin-top:20px; color:#333;" data-i18n="fabi_scan_h">Scanne unsere Kanäle</h3>
-                    </div>
-                    <br>
-                    <button class="fabi-toggle-btn" onclick="showFabiWeb()">
-                        <i class="fa-solid fa-globe"></i> <span data-i18n="btn_open_web">Webseite öffnen</span>
-                    </button>
+                <div class="fabi-qr-box">
+                    <img id="img-fabi-modal-qr" src="">
+                    <h3 style="margin-top:20px; color:#333;" data-i18n="fabi_scan_h">Scanne unsere Kanäle</h3>
                 </div>
-
-                <div id="fabi-web-view" style="display:none;">
-                    <div class="embed-container">
-                        <iframe id="iframe-fabi" class="full-iframe" src=""></iframe>
-                    </div>
-                    <br>
-                    <button class="fabi-toggle-btn" onclick="showFabiQR()" style="background:#444;">
-                        <i class="fa-solid fa-arrow-left"></i> <span data-i18n="btn_back_qr">Zurück zum QR-Code</span>
-                    </button>
-                </div>
+                <br>
+                <button class="fabi-toggle-btn" onclick="openFabiFullscreen()">
+                    <i class="fa-solid fa-globe"></i> <span data-i18n="btn_open_web">Webseite öffnen</span>
+                </button>
             </div>
+        </div>
+    </div>
+
+    <div id="modal-fabi-web" class="modal">
+        <div class="modal-header">
+            <h2>Fabi & Leon <span style="font-size:1rem; color:#888;">(Homepage)</span></h2>
+            <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-content" style="padding:0;">
+            <iframe id="iframe-fabi-full" class="full-iframe" src=""></iframe>
         </div>
     </div>
 
@@ -475,7 +455,7 @@
 
     <div id="modal-website" class="modal">
         <div class="modal-header">
-            <h2 data-i18n="m_web_h">Homepage</h2>
+            <h2><img id="img-mod-web" src="" style="height:50px;"> <span data-i18n="m_web_h">Homepage</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-content" style="padding:0;">
@@ -521,27 +501,27 @@
 
     <script>
         /* =========================================================
-           1. KONFIGURATION (HIER ALLE BILDER UND LINKS)
+           1. CONFIGURATION (Bilder & Links)
            =========================================================
         */
         const CONFIG = {
-            // Logos & Icons
+            // Icons & Logos
+            ICON_SCHOOL: "https://www.anton-hansen-schule.de/fileadmin/anton_hansen/lay/logo_ahs.png",
             ICON_UNTIS: "/images/Untis-Logo.svg",
-            ICON_TASKCARDS: "/images/taskcardslogo.jpg", // .jpg korrigiert!
+            ICON_TASKCARDS: "/images/taskcardslogo.jpg", // Changed to .jpg
             ICON_SDUI: "/images/Sduilogo.png",
             ICON_INSTA: "/images/InstaLogo.png",
-            ICON_SCHOOL: "https://www.anton-hansen-schule.de/fileadmin/anton_hansen/lay/logo_ahs.png",
             ICON_FABI: "https://www.fabiundleon.de/images/Logo_rounded.png",
-            ICON_SOR: "/images/Schule_ohne_Rassismus.svg", // Platzhalter für SoR Logo
+            ICON_SOR: "/images/Schule_ohne_Rassismus.svg", // Schule ohne Rassismus Logo Placeholder
 
-            // QR Codes (Bilder)
-            QR_INSTA: "../images/InstaQR.jpg",
-            QR_YOUTUBE: "../images/SchuleQR.jpg",
-            QR_SPOTIFY: "https://via.placeholder.com/300?text=Spotify+QR", // Platzhalter
-            QR_FABI_SOCIAL: "../images/FabiUndLeonQR.jpg", // Zeigt auf /Social-Media/
-            QR_SOR: "https://via.placeholder.com/300?text=SoR+Video+QR", // Platzhalter SoR
+            // QR Codes
+            QR_INSTA: "/images/QR-INSTA-Schule.svg",
+            QR_YOUTUBE: "/images/QR-YT-Schule.svg",
+            QR_SPOTIFY: "/images/QR-SPOTIFY-Schule.svg", // Placeholder
+            QR_FABI_SOCIAL: "/images/Ful-Socials.svg", // Points to /Social-Media/
+            QR_SOR: "/images/QR-SoR-Videos.svg", // Placeholder
 
-            // Links (für Iframes)
+            // Links (Iframes)
             LINK_TASKCARDS: "https://lk-nk.taskcards.app/#/board/f4c46a53-4fc9-4146-9dcb-6eb3d81da2a4/view?token=90d399d5-4e3b-4ef3-a763-40cf6c18c262",
             LINK_SDUI_VIDEO: "https://www.youtube.com/embed/npTVuzEj42o?enablejsapi=1&rel=0",
             LINK_FABI_WEB: "https://www.fabiundleon.de",
@@ -550,13 +530,12 @@
         };
 
         /* =========================================================
-           2. ÜBERSETZUNGEN (1:1 DEUTSCH / ENGLISCH)
+           2. TRANSLATIONS (1:1 Identical Content)
            =========================================================
         */
         const DICT = {
             de: {
                 head_title: "Tag der offenen Tür", head_sub: "AHS Interaktives Terminal",
-                
                 c_untis: "WebUntis", d_untis: "Stundenplan & Klassenbuch",
                 c_tc: "TaskCards", d_tc: "Digitale Lernzeit & Aufgaben",
                 c_sdui: "Sdui", d_sdui: "Messenger & News",
@@ -580,7 +559,7 @@
 
                 fabi_about_h: "Über uns", fabi_about_t: "Wir sind Fabi & Leon. Wir engagieren uns als stellvertretende Schülersprecher in der SV und produzieren als Content Creator den Podcast und die YouTube-Videos der AHS.",
                 fabi_scan_h: "Scanne unsere Kanäle",
-                btn_open_web: "Webseite öffnen", btn_back_qr: "Zurück zum QR-Code",
+                btn_open_web: "Webseite öffnen",
 
                 m_sor_h: "Schule ohne Rassismus", sor_info_h: "Schule mit Courage",
                 sor_info_t: "Wir setzen uns aktiv gegen Rassismus ein. Hier findest du Videos und Projekte zu unserem Engagement.",
@@ -594,7 +573,6 @@
             },
             en: {
                 head_title: "Open House Day", head_sub: "AHS Interactive Terminal",
-                
                 c_untis: "WebUntis", d_untis: "Timetable & Register",
                 c_tc: "TaskCards", d_tc: "Digital Study Time & Tasks",
                 c_sdui: "Sdui", d_sdui: "Messenger & News",
@@ -618,7 +596,7 @@
 
                 fabi_about_h: "About Us", fabi_about_t: "We are Fabi & Leon. We are committed as deputy head students in the SV and produce the podcast and YouTube videos of AHS as Content Creators.",
                 fabi_scan_h: "Scan our channels",
-                btn_open_web: "Open Website", btn_back_qr: "Back to QR Code",
+                btn_open_web: "Open Website",
 
                 m_sor_h: "School w/o Racism", sor_info_h: "School with Courage",
                 sor_info_t: "We actively stand against racism. Here you can find videos and projects about our commitment.",
@@ -633,15 +611,14 @@
         };
 
         /* =========================================================
-           3. INIT & LOGIC
+           3. LOGIC
            =========================================================
         */
         
         window.onload = function() {
-            // Header
+            // Assign Images
             document.getElementById('head-logo').src = CONFIG.ICON_SCHOOL;
             
-            // Kacheln
             document.getElementById('icon-untis').src = CONFIG.ICON_UNTIS;
             document.getElementById('icon-taskcards').src = CONFIG.ICON_TASKCARDS;
             document.getElementById('icon-sdui').src = CONFIG.ICON_SDUI;
@@ -649,6 +626,12 @@
             document.getElementById('icon-school').src = CONFIG.ICON_SCHOOL;
             document.getElementById('icon-fabi').src = CONFIG.ICON_FABI;
             document.getElementById('icon-sor').src = CONFIG.ICON_SOR;
+
+            // Modals
+            document.getElementById('img-mod-untis').src = CONFIG.ICON_UNTIS;
+            document.getElementById('img-mod-tc').src = CONFIG.ICON_TASKCARDS;
+            document.getElementById('img-mod-sdui').src = CONFIG.ICON_SDUI;
+            document.getElementById('img-mod-web').src = CONFIG.ICON_SCHOOL;
 
             // QR Codes
             document.getElementById('img-qr-youtube').src = CONFIG.QR_YOUTUBE;
@@ -658,17 +641,17 @@
             document.getElementById('img-sor-qr').src = CONFIG.QR_SOR;
         };
 
-        // State
         let idleTime = 0;
         let isModalOpen = false;
+        let currentLang = 'de';
 
-        // Attract Animations (Zufällige Kachel blinkt)
+        // Animations Randomizer
         setInterval(() => {
             if (!isModalOpen) {
                 const cards = document.querySelectorAll('.card');
                 const randomCard = cards[Math.floor(Math.random() * cards.length)];
                 
-                const anims = ['anim-neon', 'anim-bounce'];
+                const anims = ['anim-neon', 'anim-bounce', 'anim-pulse', 'anim-glow'];
                 const chosen = anims[Math.floor(Math.random() * anims.length)];
                 
                 randomCard.classList.add(chosen);
@@ -676,9 +659,10 @@
             }
         }, 4000);
 
-        // Idle Timer
+        // Idle Logic
         setInterval(() => {
-            if (isModalOpen) {
+            // Check if active (Modal open OR language changed)
+            if (isModalOpen || currentLang !== 'de') {
                 idleTime++;
                 if (idleTime === 60) document.getElementById('timeout-layer').classList.add('visible');
                 if (idleTime >= 75) resetSystem();
@@ -697,31 +681,22 @@
             setLang('de');
         }
 
-        // Modal Control
         function openModal(id) {
             resetIdleTimer();
             isModalOpen = true;
             document.getElementById('modal-' + id).classList.add('open');
             
-            // Lazy Load Iframes
+            // Iframes Load
             if(id === 'taskcards') document.getElementById('iframe-taskcards').src = CONFIG.LINK_TASKCARDS;
             if(id === 'sdui') document.getElementById('iframe-sdui').src = CONFIG.LINK_SDUI_VIDEO;
             if(id === 'website') document.getElementById('iframe-school').src = CONFIG.LINK_SCHOOL_WEB;
             if(id === 'social') document.getElementById('iframe-rss').src = CONFIG.LINK_RSS_FEED;
         }
 
-        function showFabiWeb() {
-            document.getElementById('fabi-qr-view').style.display = 'none';
-            document.getElementById('fabi-web-view').style.display = 'block';
-            document.getElementById('iframe-fabi').src = CONFIG.LINK_FABI_WEB;
-            resetIdleTimer();
-        }
-
-        function showFabiQR() {
-            document.getElementById('fabi-web-view').style.display = 'none';
-            document.getElementById('fabi-qr-view').style.display = 'block';
-            document.getElementById('iframe-fabi').src = "";
-            resetIdleTimer();
+        function openFabiFullscreen() {
+            closeAll(); // Close current modal
+            openModal('fabi-web'); // Open full web modal
+            document.getElementById('iframe-fabi-full').src = CONFIG.LINK_FABI_WEB;
         }
 
         function closeAll() {
@@ -729,17 +704,12 @@
             document.querySelectorAll('.modal').forEach(el => el.classList.remove('open'));
             resetIdleTimer();
             
-            // Clear Iframes
-            const frames = ['iframe-taskcards', 'iframe-sdui', 'iframe-school', 'iframe-rss', 'iframe-fabi'];
+            const frames = ['iframe-taskcards', 'iframe-sdui', 'iframe-school', 'iframe-rss', 'iframe-fabi-full'];
             frames.forEach(id => document.getElementById(id).src = "");
-            
-            // Reset Fabi View
-            document.getElementById('fabi-qr-view').style.display = 'block';
-            document.getElementById('fabi-web-view').style.display = 'none';
         }
 
-        // Language
         function setLang(lang) {
+            currentLang = lang;
             resetIdleTimer();
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             document.querySelector(`button[onclick="setLang('${lang}')"]`).classList.add('active');
