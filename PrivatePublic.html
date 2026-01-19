@@ -7,15 +7,17 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         :root {
             --primary: #007aff;
             --u-red: #ff3b30;
+            --u-green: #2ecc71;
+            --u-orange: #ff9500;
+            --u-gray: #bdc3c7;
             --bg-grad: linear-gradient(135deg, #eef2f3 0%, #8e9eab 100%);
-            --glass: rgba(255, 255, 255, 0.90);
-            --shadow: 0 1vh 2vh rgba(0,0,0,0.15);
+            --glass: rgba(255, 255, 255, 0.92);
+            --shadow: 0 1vh 2vh rgba(0,0,0,0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; user-select: none; }
@@ -24,7 +26,7 @@
             background: var(--bg-grad);
             width: 100vw;
             height: 100vh;
-            overflow: hidden; /* VERHINDERT SCROLLEN KOMPLETT */
+            overflow: hidden; /* WICHTIG: Kein Scrollen auf der Hauptseite */
             display: flex;
             flex-direction: column;
         }
@@ -32,136 +34,169 @@
         /* Hintergrund-Effekt */
         .ambient {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 50%, rgba(0,122,255,0.1), transparent 60%);
+            background: radial-gradient(circle at 50% 50%, rgba(0,122,255,0.08), transparent 60%);
         }
 
-        /* --- HEADER (Nimmt exakt 12% der Höhe ein) --- */
+        /* --- HEADER (Kleiner) --- */
         header {
-            height: 12vh;
-            padding: 0 3vw;
+            height: 10vh; /* Reduziert von 12vh */
+            padding: 0 2vw;
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.5);
             z-index: 50;
         }
-        .brand { display: flex; align-items: center; gap: 1.5vw; }
-        .brand img { height: 8vh; width: auto; object-fit: contain; }
+        .brand { display: flex; align-items: center; gap: 1vw; }
+        .brand img { height: 6vh; width: auto; object-fit: contain; }
         .brand h1 { 
-            font-size: clamp(1.5rem, 2.5vw, 3rem); /* Skaliert mit der Breite */
-            color: #222; font-weight: 900; text-transform: uppercase; line-height: 1;
+            font-size: clamp(1.2rem, 1.8vw, 2rem); /* Viel kleiner */
+            color: #222; font-weight: 800; text-transform: uppercase; line-height: 1;
         }
         .brand small { 
             display: block; font-weight: 600; color: var(--primary); 
-            font-size: clamp(0.8rem, 1.2vw, 1.5rem); letter-spacing: 1px; 
+            font-size: clamp(0.7rem, 0.9vw, 1rem); letter-spacing: 1px; 
         }
         
         .lang-btn {
-            border: none; background: rgba(0,0,0,0.05); padding: 0.8vh 2vw; border-radius: 50px;
-            font-weight: 800; color: #888; cursor: pointer; font-size: 1.5vh;
+            border: none; background: rgba(0,0,0,0.05); padding: 0.5vh 1.5vw; border-radius: 50px;
+            font-weight: 700; color: #888; cursor: pointer; font-size: 1.2vh; transition: 0.2s;
         }
         .lang-btn.active { background: var(--primary); color: white; }
 
-        /* --- MAIN GRID (Nimmt den Rest der Höhe ein) --- */
+        /* --- MAIN GRID --- */
         main {
-            height: 88vh; /* Restliche Höhe */
+            height: 90vh; 
             width: 100vw;
-            padding: 2vh 2vw;
+            padding: 1.5vh 1.5vw; /* Weniger Abstand zum Rand */
             display: grid;
-            /* DAS IST DER TRICK: 4 Spalten, 2 Zeilen - festes Raster */
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 2vh 2vw;
+            gap: 1.5vh 1.5vw; /* Kleinere Lücken */
         }
 
-        /* CARD STYLING */
+        /* CARD STYLING (Kompakter) */
         .card {
             background: var(--glass);
-            border-radius: 3vh;
-            padding: 2vh;
+            border-radius: 2vh;
+            padding: 1.5vh;
             text-align: center;
             box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.2s;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            height: 100%; /* Füllt die Raster-Zelle komplett */
-            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; width: 100%;
             border: 2px solid transparent;
         }
-        
         .card:active { transform: scale(0.98); }
 
-        /* Bild-Container in der Karte: Skaliert dynamisch */
         .logo-box {
-            height: 45%; /* Bild nimmt knapp die Hälfte der Karte ein */
+            height: 40%; 
             width: 100%;
             display: flex; align-items: center; justify-content: center;
-            margin-bottom: 1vh;
+            margin-bottom: 0.5vh;
         }
         .logo-box img { 
-            max-height: 100%; max-width: 80%; 
+            max-height: 100%; max-width: 70%; 
             object-fit: contain; 
-            filter: drop-shadow(0 0.5vh 1vh rgba(0,0,0,0.1)); 
+            filter: drop-shadow(0 0.3vh 0.5vh rgba(0,0,0,0.1)); 
         }
 
-        /* Text-Skalierung basierend auf Viewport */
+        /* Schriften in Karten deutlich kleiner */
         .card h3 { 
-            font-size: clamp(1.2rem, 2vw, 2.5rem); 
-            margin-bottom: 0.5vh; color: #222; font-weight: 800; 
-            line-height: 1.2;
+            font-size: clamp(1rem, 1.4vw, 1.6rem); 
+            margin-bottom: 0.2vh; color: #222; font-weight: 800; 
         }
         .card p { 
-            font-size: clamp(0.8rem, 1.2vw, 1.5rem); 
-            color: #666; font-weight: 500; line-height: 1.3;
+            font-size: clamp(0.7rem, 0.9vw, 1rem); 
+            color: #666; font-weight: 500; line-height: 1.2;
         }
 
-        /* SPEZIALKARTE FABI & LEON (Breit) */
-        /* Spannt sich über 2 Spalten, sitzt unten links */
+        /* Fabi Card */
         .card-fabi {
             grid-column: span 2; 
             background: linear-gradient(120deg, #ffffff 0%, #f0f7ff 100%);
             flex-direction: row; 
-            padding: 0 4vw;
+            padding: 0 3vw;
             justify-content: space-between;
         }
-        
         .tag { 
             background: rgba(0,122,255,0.1); color: var(--primary); 
-            padding: 0.5vh 1vw; border-radius: 1vh; 
-            font-size: clamp(0.7rem, 1vw, 1.2rem); 
-            font-weight: 700; display: inline-block; margin-top: 1vh;
+            padding: 0.4vh 0.8vw; border-radius: 0.8vh; 
+            font-size: clamp(0.6rem, 0.8vw, 0.9rem); 
+            font-weight: 700; display: inline-block; margin-top: 0.5vh;
         }
 
-        /* Animationen */
-        .anim-glow { animation: borderGlow 3s ease infinite; }
-        @keyframes borderGlow { 0%, 100% { border-color: transparent; } 50% { border-color: var(--primary); box-shadow: 0 0 30px rgba(0,122,255,0.3); } }
-
-        /* --- MODALS (Bleiben wie sie sind, nur Overlay angepasst) --- */
+        /* --- MODALS (Layout für Inhalt) --- */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(240, 242, 245, 0.98); backdrop-filter: blur(20px);
+            background: rgba(240, 242, 245, 0.98); backdrop-filter: blur(15px);
             z-index: 100; display: none; flex-direction: column;
+            animation: fadeIn 0.3s forwards;
         }
-        .modal.open { display: flex; animation: fadeIn 0.3s forwards; }
+        .modal.open { display: flex; }
         
         .modal-header {
-            flex: 0 0 10vh; /* Feste Headerhöhe im Modal */
-            padding: 0 3vw; background: white; 
+            flex: 0 0 8vh; 
+            padding: 0 2vw; background: white; border-bottom: 1px solid #ddd;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .modal-header h2 { font-size: clamp(1.5rem, 2.5vw, 3rem); font-weight: 800; color: var(--primary); }
+        .modal-header h2 { font-size: clamp(1.2rem, 1.8vw, 2.2rem); font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 1vw; }
         .close-btn {
-            background: var(--u-red); color: white; border: none; padding: 1vh 3vw;
-            border-radius: 50px; font-weight: 800; cursor: pointer; font-size: clamp(1rem, 1.5vw, 2rem);
+            background: var(--u-red); color: white; border: none; padding: 0.8vh 2vw;
+            border-radius: 50px; font-weight: 700; cursor: pointer; font-size: clamp(0.8rem, 1vw, 1.2rem);
         }
-        .modal-content { flex: 1; padding: 3vh 3vw; overflow-y: auto; } /* Hier darf gescrollt werden */
-        
-        .full-iframe { width: 100%; height: 100%; border: none; border-radius: 2vh; }
-        .embed-container { width: 100%; height: 75vh; border-radius: 2vh; overflow: hidden; border: 2px solid #eee; }
+
+        .modal-content { 
+            flex: 1; padding: 2vh 3vw; overflow-y: auto; /* Hier darf gescrollt werden wenn nötig */
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* Erklär-Boxen Design */
+        .explain-box {
+            background: white; padding: 2vh 2vw; border-radius: 1.5vh;
+            box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.05); margin-bottom: 2vh;
+            width: 100%; max-width: 1400px; text-align: left;
+            border-left: 0.5vw solid var(--primary);
+        }
+        .explain-box h3 { margin-bottom: 1vh; color: var(--primary); font-size: clamp(1.1rem, 1.4vw, 1.8rem); }
+        .explain-box p { color: #444; line-height: 1.5; margin-bottom: 1vh; font-size: clamp(0.8rem, 1vw, 1.2rem); }
+
+        /* Untis Tabelle */
+        .untis-wrapper { width: 100%; overflow-x: auto; background: white; border-radius: 1.5vh; box-shadow: 0 0.5vh 2vh rgba(0,0,0,0.05); padding: 1vh; }
+        .untis-table { width: 100%; border-collapse: separate; border-spacing: 0.3vw; min-width: 800px; }
+        .untis-table th { background: #34495e; color: white; padding: 1vh; font-size: 1vw; border-radius: 0.5vh; }
+        .untis-table td { vertical-align: top; height: 10vh; width: 18%; background: white; padding: 0; }
+        .td-time { width: 8% !important; background: transparent !important; color: #999; font-weight: 800; text-align: center; vertical-align: top !important; padding-top: 1vh !important; font-size: 0.9vw; }
+
+        .u-block {
+            border-radius: 0.5vh; padding: 0.5vh; margin-bottom: 0.2vh; font-size: 0.8vw;
+            display: flex; flex-direction: column; justify-content: center;
+            border-left-width: 0.3vw; border-left-style: solid;
+            background: #fdfdfd; box-shadow: 0 1px 3px rgba(0,0,0,0.05); height: 100%;
+        }
+        .st-norm { border-left-color: var(--u-gray); }
+        .st-red { border-left-color: var(--u-red); background: #fff5f5; }
+        .st-orange { border-left-color: var(--u-orange); background: #fffaf0; }
+        .st-green { border-left-color: var(--u-green); background: #f0fff4; }
+        .u-subj { font-weight: 800; font-size: 0.9vw; color: #2c3e50; }
+        .u-info { font-size: 0.7vw; color: #7f8c8d; }
+
+        /* Iframes */
+        .full-iframe { width: 100%; height: 100%; border: none; }
+        .embed-container { width: 100%; max-width: 1200px; height: 60vh; border-radius: 1.5vh; overflow: hidden; border: 2px solid #eee; margin-top: 1vh; }
+
+        /* Timeout Overlay */
+        .timeout-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000;
+            display: none; flex-direction: column; justify-content: center; align-items: center; color: white;
+            text-align: center;
+        }
+        .timeout-layer.visible { display: flex; }
+        .timer-circle { font-size: 3rem; margin-bottom: 2vh; animation: pulse 1s infinite; }
 
         @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
     </style>
 </head>
 <body>
@@ -176,7 +211,7 @@
                 <small data-i18n="head_sub">AHS Interaktives Terminal</small>
             </div>
         </div>
-        <div class="lang-switch" style="display:flex; gap:1vw;">
+        <div class="lang-switch" style="display:flex; gap:0.5vw;">
             <button class="lang-btn active" onclick="setLang('de')">DE</button>
             <button class="lang-btn" onclick="setLang('en')">EN</button>
         </div>
@@ -217,14 +252,14 @@
                 </div>
             </div>
             <div class="logo-box" style="width: auto; height: 80%; margin:0;">
-                <img id="icon-fabi" src="" style="border-radius: 15px;">
+                <img id="icon-fabi" src="" style="border-radius: 1vh;">
             </div>
         </div>
 
         <div class="card" onclick="openModal('sor')">
             <div class="logo-box"><img id="icon-sor" src=""></div>
             <h3 data-i18n="c_sor">Courage</h3>
-            <p data-i18n="d_sor">Schule ohne Rassismus</p>
+            <p data-i18n="d_sor">Videos mitnehmen</p>
         </div>
 
         <div class="card" onclick="openModal('website')">
@@ -236,55 +271,134 @@
 
     <div id="modal-untis" class="modal">
         <div class="modal-header">
-            <h2><img id="img-mod-untis" src="" style="height:5vh; margin-right:1vw;"> WebUntis</h2>
-            <button class="close-btn" onclick="closeAll()">X Schließen</button>
+            <h2><img id="img-mod-untis" src="" style="height:4vh; margin-right:1vw;"> <span data-i18n="m_untis_h">WebUntis</span></h2>
+            <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-content">
-             <div class="embed-container"><iframe class="full-iframe" src="https://hepta.webuntis.com/WebUntis/?school=anton-hansen-schule#/basic/login"></iframe></div>
+            <div class="explain-box">
+                <h3 data-i18n="exp_untis_h">Dein digitaler Planer</h3>
+                <p data-i18n="exp_untis_t1">An der AHS gibt es keine Zettelwirtschaft mehr. WebUntis zeigt dir in Echtzeit, wann und wo dein Unterricht stattfindet. So bist du immer perfekt organisiert.</p>
+                <p data-i18n="exp_untis_t2">Die Farben helfen dir sofort zu verstehen, was los ist: <b style="color:var(--u-red)">Rot</b> bedeutet Entfall, <b style="color:var(--u-green)">Grün</b> zeigt Vertretungen oder Events an. Alles direkt auf deinem Smartphone!</p>
+            </div>
+            <div class="untis-wrapper">
+                <table class="untis-table">
+                    <thead><tr><th></th><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th></tr></thead>
+                    <tbody>
+                        <tr><td class="td-time">1.</td>
+                            <td><div class="u-block st-red"><span class="u-subj cancelled">LZ</span><span class="u-info">Entfall</span></div></td>
+                            <td><div class="u-block st-red"><span class="u-subj cancelled">LZ</span><span class="u-info">Entfall</span></div></td>
+                            <td><div class="u-block st-green"><span class="u-subj">LZ</span><span class="u-info">Vertretung</span></div></td>
+                            <td><div class="u-block st-norm"><span class="u-subj">LZ</span><span class="u-info">Regulär</span></div></td>
+                            <td><div class="u-block st-norm"><span class="u-subj">LZ</span><span class="u-info">Regulär</span></div></td>
+                        </tr>
+                        <tr><td class="td-time">2.</td>
+                            <td><div class="u-block st-norm"><span class="u-subj">EnEA</span><span class="u-info">R2.33</span></div></td>
+                            <td><div class="u-block st-norm"><span class="u-subj">Mu</span><span class="u-info">Musik</span></div></td>
+                            <td><div class="u-block st-norm"><span class="u-subj">DeEA</span><span class="u-info">R2.32</span></div></td>
+                            <td><div class="u-block st-green"><span class="u-subj">Rel</span><span class="u-info">Verlegung</span></div></td>
+                            <td><div class="u-block st-orange"><span class="u-subj">Bio</span><span class="u-info">Info!</span></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <div id="modal-taskcards" class="modal">
-        <div class="modal-header"><h2>TaskCards</h2><button class="close-btn" onclick="closeAll()">X</button></div>
-        <div class="modal-content"><div class="embed-container"><iframe id="iframe-taskcards" class="full-iframe" src=""></iframe></div></div>
+        <div class="modal-header">
+            <h2><img id="img-mod-tc" src="" style="height:4vh; margin-right:1vw;"> <span data-i18n="m_tc_h">TaskCards</span></h2>
+            <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-content">
+            <div class="explain-box">
+                <h3 data-i18n="exp_tc_h">Moderne Lernzeit (LZ)</h3>
+                <p data-i18n="exp_tc_t1">An der AHS setzen wir auf selbstständiges Lernen. Wir haben keine klassischen Hausaufgaben! Alle Aufgaben für die Woche findest du jeden Montag digital auf TaskCards.</p>
+                <p data-i18n="exp_tc_t2">TaskCards ist DSGVO-konform, sicher und kinderleicht zu bedienen.</p>
+            </div>
+            <div class="embed-container">
+                <iframe id="iframe-taskcards" class="full-iframe" src=""></iframe>
+            </div>
+        </div>
     </div>
 
     <div id="modal-sdui" class="modal">
-        <div class="modal-header"><h2>Sdui</h2><button class="close-btn" onclick="closeAll()">X</button></div>
-        <div class="modal-content"><div class="embed-container"><iframe id="iframe-sdui" class="full-iframe" src=""></iframe></div></div>
+        <div class="modal-header">
+            <h2><img id="img-mod-sdui" src="" style="height:4vh; margin-right:1vw;"> <span data-i18n="m_sdui_h">Sdui</span></h2>
+            <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-content">
+            <div class="explain-box">
+                <h3 data-i18n="exp_sdui_h">Sichere Kommunikation</h3>
+                <p data-i18n="exp_sdui_t1">Wir verzichten auf WhatsApp-Gruppen. Sdui ist unser offizieller Messenger für Eltern, Schüler und Lehrer.</p>
+                <p data-i18n="exp_sdui_t2">Besonders toll: Nachrichten werden automatisch in Ihre Muttersprache übersetzt! Außerdem sind keine privaten Telefonnummern sichtbar.</p>
+            </div>
+            <div class="embed-container">
+                <iframe id="iframe-sdui" class="full-iframe" src=""></iframe>
+            </div>
+        </div>
     </div>
 
     <div id="modal-fabi" class="modal">
-        <div class="modal-header"><h2>Fabi & Leon</h2><button class="close-btn" onclick="closeAll()">X</button></div>
-        <div class="modal-content" style="text-align:center;">
-             <img id="img-fabi-modal-qr" src="" style="height:40vh; margin:5vh auto;">
-             <button class="lang-btn active" style="font-size:3vh; padding:2vh 5vw;" onclick="openFabiFullscreen()">Webseite öffnen</button>
+        <div class="modal-header"><h2>Fabi & Leon</h2><button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span></button></div>
+        <div class="modal-content">
+            <div class="explain-box">
+                <h3 data-i18n="fabi_about_h">Über uns</h3>
+                <p data-i18n="fabi_about_t">Wir sind Fabi & Leon. Wir engagieren uns als stellvertretende Schülersprecher in der SV.</p>
+            </div>
+            <div style="text-align:center; background:white; padding:2vh; border-radius:2vh;">
+                 <img id="img-fabi-modal-qr" src="" style="height:35vh;">
+                 <br><br>
+                 <button class="lang-btn active" style="font-size:2vh; padding:1.5vh 3vw;" onclick="openFabiFullscreen()"><span data-i18n="btn_open_web">Webseite öffnen</span></button>
+            </div>
         </div>
     </div>
+    
     <div id="modal-fabi-web" class="modal">
-        <div class="modal-header"><h2>Fabi & Leon Web</h2><button class="close-btn" onclick="closeAll()">X</button></div>
+        <div class="modal-header"><h2>Fabi & Leon Web</h2><button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span></button></div>
         <div class="modal-content" style="padding:0;"><iframe id="iframe-fabi-full" class="full-iframe" src=""></iframe></div>
     </div>
 
     <div id="modal-sor" class="modal">
-        <div class="modal-header"><h2>Schule ohne Rassismus</h2><button class="close-btn" onclick="closeAll()">X</button></div>
-        <div class="modal-content" style="text-align:center;">
-            <img id="img-sor-qr" src="" style="height:50vh;">
+        <div class="modal-header">
+            <h2 data-i18n="m_sor_h">Schule ohne Rassismus</h2>
+            <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span></button>
+        </div>
+        <div class="modal-content">
+            <div class="explain-box">
+                <h3 data-i18n="sor_info_h">Schule mit Courage</h3>
+                <p data-i18n="sor_info_t">Wir setzen uns aktiv gegen Rassismus ein. Hier findest du Videos und Projekte zu unserem Engagement.</p>
+            </div>
+            <div style="text-align:center; background:white; padding:3vh; border-radius:2vh;">
+                <h3 style="margin-bottom:1vh;" data-i18n="sor_scan">Videos mitnehmen (Scan)</h3>
+                <img id="img-sor-qr" src="" style="height:35vh;">
+            </div>
         </div>
     </div>
 
     <div id="modal-website" class="modal">
-        <div class="modal-header"><h2>Homepage</h2><button class="close-btn" onclick="closeAll()">X</button></div>
+        <div class="modal-header"><h2>Homepage</h2><button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span></button></div>
         <div class="modal-content" style="padding:0;"><iframe id="iframe-school" class="full-iframe" src=""></iframe></div>
     </div>
 
     <div id="modal-social" class="modal">
-        <div class="modal-header"><h2>Social Media</h2><button class="close-btn" onclick="closeAll()">X</button></div>
-        <div class="modal-content" style="padding:0;"><iframe id="iframe-rss" class="full-iframe" src=""></iframe></div>
+        <div class="modal-header">
+            <h2 data-i18n="m_soc_h">Social Media</h2>
+            <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span></button>
+        </div>
+        <div class="modal-content" style="padding:0;">
+            <iframe id="iframe-rss" class="full-iframe" src=""></iframe>
+        </div>
+    </div>
+
+    <div id="timeout-layer" class="timeout-layer">
+        <div class="timer-circle">👋</div>
+        <h2 data-i18n="time_h">Bist du noch da?</h2>
+        <p data-i18n="time_t">Der Bildschirm wird gleich zurückgesetzt.</p>
+        <button onclick="resetIdleTimer()" style="margin-top:2vh; padding:1.5vh 3vw; border:none; border-radius:50px; background:white; color:black; font-weight:bold; font-size:2vh; cursor:pointer;" data-i18n="btn_yes">JA</button>
     </div>
 
     <script>
-        
+        // DEINE CONFIG (Original übernommen)
         const CONFIG = {
             // Icons & Logos
             ICON_SCHOOL: "https://www.anton-hansen-schule.de/fileadmin/anton_hansen/lay/logo_ahs.png",
@@ -301,7 +415,8 @@
             QR_SPOTIFY: "/images/QR-SPOTIFY-Schule.svg", // Placeholder
             QR_FABI_SOCIAL: "/images/Ful-Socials.svg", // Points to /Social-Media/
             QR_SOR: "/images/QR-SoR-Videos.svg", // Placeholder
-            
+
+            // Links (Iframes)
             LINK_TASKCARDS: "https://lk-nk.taskcards.app/#/board/f4c46a53-4fc9-4146-9dcb-6eb3d81da2a4/view?token=90d399d5-4e3b-4ef3-a763-40cf6c18c262",
             LINK_SDUI_VIDEO: "https://www.youtube.com/embed/npTVuzEj42o?enablejsapi=1&rel=0",
             LINK_FABI_WEB: "https://www.fabiundleon.de",
@@ -315,11 +430,37 @@
                 c_untis: "WebUntis", d_untis: "Stundenplan",
                 c_tc: "TaskCards", d_tc: "Lernzeit & Aufgaben",
                 c_sdui: "Sdui", d_sdui: "Messenger & News",
-                c_sor: "Courage", d_sor: "Schule ohne Rassismus",
+                c_sor: "Schule ohne Rassismus", d_sor: "Videos mitnehmen",
                 d_fabi: "Content Creator & SV",
                 tag_sv: "Schülersprecher", tag_media: "Podcast",
                 c_soc: "Social Media", d_soc: "Feed & News",
-                c_web: "Homepage", d_web: "Webseite öffnen"
+                c_web: "Homepage", d_web: "Webseite öffnen",
+
+                // Wiederhergestellte Texte
+                m_untis_h: "WebUntis", exp_untis_h: "Dein digitaler Planer",
+                exp_untis_t1: "An der AHS gibt es keine Zettelwirtschaft mehr. WebUntis zeigt dir in Echtzeit, wann und wo dein Unterricht stattfindet. So bist du immer perfekt organisiert.",
+                exp_untis_t2: "Die Farben helfen dir sofort zu verstehen, was los ist: Rot bedeutet Entfall, Grün zeigt Vertretungen oder Events an. Alles direkt auf deinem Smartphone!",
+
+                m_tc_h: "TaskCards", exp_tc_h: "Moderne Lernzeit (LZ)",
+                exp_tc_t1: "An der AHS setzen wir auf selbstständiges Lernen. Wir haben keine klassischen Hausaufgaben! Alle Aufgaben für die Woche findest du jeden Montag digital auf TaskCards.",
+                exp_tc_t2: "TaskCards ist DSGVO-konform, sicher und kinderleicht zu bedienen. Es funktioniert wie eine digitale Pinnwand, auf der Lehrer Materialien, Videos und Aufgaben bereitstellen.",
+
+                m_sdui_h: "Sdui", exp_sdui_h: "Sichere Kommunikation",
+                exp_sdui_t1: "Wir verzichten auf WhatsApp-Gruppen. Sdui ist unser offizieller Messenger für Eltern, Schüler und Lehrer. Hierüber laufen Elternbriefe, Krankmeldungen und wichtige Infos.",
+                exp_sdui_t2: "Besonders toll: Nachrichten werden automatisch in Ihre Muttersprache übersetzt! Außerdem sind keine privaten Telefonnummern sichtbar.",
+
+                fabi_about_h: "Über uns", fabi_about_t: "Wir sind Fabi & Leon. Wir engagieren uns als stellvertretende Schülersprecher in der SV und produzieren als Content Creator den Podcast und die YouTube-Videos der AHS.",
+                fabi_scan_h: "Scanne unsere Kanäle",
+                btn_open_web: "Webseite öffnen",
+
+                m_sor_h: "Schule ohne Rassismus", sor_info_h: "Schule mit Courage",
+                sor_info_t: "Wir setzen uns aktiv gegen Rassismus ein. Hier findest du Videos und Projekte zu unserem Engagement.",
+                sor_scan: "Videos mitnehmen (Scan)",
+
+                m_web_h: "Homepage", m_soc_h: "Social Media & News",
+
+                time_h: "Bist du noch da?", time_t: "Der Bildschirm wird gleich zurückgesetzt.",
+                btn_close: "Schließen", btn_yes: "JA"
             },
             en: {
                 head_title: "Open House Day", head_sub: "Interactive Terminal",
@@ -330,11 +471,37 @@
                 d_fabi: "Content Creators",
                 tag_sv: "Head Students", tag_media: "Podcast",
                 c_soc: "Social Media", d_soc: "Feed & News",
-                c_web: "Website", d_web: "Open Website"
+                c_web: "Website", d_web: "Open Website",
+
+                m_untis_h: "WebUntis", exp_untis_h: "Your Digital Planner",
+                exp_untis_t1: "At AHS, there is no more paper chaos. WebUntis shows you exactly when and where your lessons take place in real-time. You are always perfectly organized.",
+                exp_untis_t2: "Colors help you understand immediately: Red means cancellation, Green shows substitutions or events. Everything directly on your smartphone!",
+
+                m_tc_h: "TaskCards", exp_tc_h: "Modern Study Time (LZ)",
+                exp_tc_t1: "At AHS, we rely on independent learning. We have no traditional homework! You can find all tasks for the week digitally on TaskCards every Monday.",
+                exp_tc_t2: "TaskCards is GDPR-compliant, secure, and very easy to use.",
+
+                m_sdui_h: "Sdui", exp_sdui_h: "Secure Communication",
+                exp_sdui_t1: "We do not use WhatsApp groups. Sdui is our official messenger for parents, students, and teachers. Letters to parents, sick notes, and important info run through here.",
+                exp_sdui_t2: "Especially great: Messages are automatically translated into your native language! Also, no private phone numbers are visible.",
+
+                fabi_about_h: "About Us", fabi_about_t: "We are Fabi & Leon. We are committed as deputy head students in the SV and produce the podcast and YouTube videos of AHS as Content Creators.",
+                fabi_scan_h: "Scan our channels",
+                btn_open_web: "Open Website",
+
+                m_sor_h: "School w/o Racism", sor_info_h: "School with Courage",
+                sor_info_t: "We actively stand against racism. Here you can find videos and projects about our commitment.",
+                sor_scan: "Take videos with you (Scan)",
+
+                m_web_h: "Website", m_soc_h: "Social Media & News",
+
+                time_h: "Are you still there?", time_t: "The screen will reset shortly.",
+                btn_close: "Close", btn_yes: "YES"
             }
         };
 
         window.onload = function() {
+            // Bilder zuweisen aus CONFIG
             document.getElementById('head-logo').src = CONFIG.ICON_SCHOOL;
             document.getElementById('icon-untis').src = CONFIG.ICON_UNTIS;
             document.getElementById('icon-taskcards').src = CONFIG.ICON_TASKCARDS;
@@ -343,20 +510,44 @@
             document.getElementById('icon-school').src = CONFIG.ICON_SCHOOL;
             document.getElementById('icon-fabi').src = CONFIG.ICON_FABI;
             document.getElementById('icon-sor').src = CONFIG.ICON_SOR;
+            
+            // Modal Bilder
             document.getElementById('img-mod-untis').src = CONFIG.ICON_UNTIS;
+            document.getElementById('img-mod-tc').src = CONFIG.ICON_TASKCARDS;
+            document.getElementById('img-mod-sdui').src = CONFIG.ICON_SDUI;
+
+            // QR Codes
             document.getElementById('img-fabi-modal-qr').src = CONFIG.QR_FABI_SOCIAL;
             document.getElementById('img-sor-qr').src = CONFIG.QR_SOR;
-            
-            // Zufällige Animationen starten
-            setInterval(() => {
-                const cards = document.querySelectorAll('.card');
-                const randomCard = cards[Math.floor(Math.random() * cards.length)];
-                randomCard.classList.add('anim-glow');
-                setTimeout(() => randomCard.classList.remove('anim-glow'), 3000);
-            }, 5000);
         };
 
+        let idleTime = 0;
+        let isModalOpen = false;
+        let currentLang = 'de';
+
+        setInterval(() => {
+            if (isModalOpen || currentLang !== 'de') {
+                idleTime++;
+                if (idleTime === 60) document.getElementById('timeout-layer').classList.add('visible');
+                if (idleTime >= 75) resetSystem();
+            } else {
+                idleTime = 0; 
+            }
+        }, 1000);
+
+        function resetIdleTimer() {
+            idleTime = 0;
+            document.getElementById('timeout-layer').classList.remove('visible');
+        }
+
+        function resetSystem() {
+            closeAll();
+            setLang('de');
+        }
+
         function openModal(id) {
+            resetIdleTimer();
+            isModalOpen = true;
             document.getElementById('modal-' + id).classList.add('open');
             if(id === 'taskcards') document.getElementById('iframe-taskcards').src = CONFIG.LINK_TASKCARDS;
             if(id === 'sdui') document.getElementById('iframe-sdui').src = CONFIG.LINK_SDUI_VIDEO;
@@ -371,12 +562,16 @@
         }
 
         function closeAll() {
+            isModalOpen = false;
             document.querySelectorAll('.modal').forEach(el => el.classList.remove('open'));
+            resetIdleTimer();
             const frames = ['iframe-taskcards', 'iframe-sdui', 'iframe-school', 'iframe-rss', 'iframe-fabi-full'];
             frames.forEach(id => document.getElementById(id).src = "");
         }
 
         function setLang(lang) {
+            currentLang = lang;
+            resetIdleTimer();
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -384,6 +579,8 @@
                 if(DICT[lang][key]) el.innerText = DICT[lang][key];
             });
         }
+        
+        ['click', 'touchstart', 'mousemove'].forEach(evt => window.addEventListener(evt, resetIdleTimer));
     </script>
 </body>
 </html>
