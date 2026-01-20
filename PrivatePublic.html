@@ -10,9 +10,10 @@
 
     <style>
         :root {
-            /* --- ZOOM-FAKTOR FÜR MODALS --- */
-            /* 0.55 = Alles ist schön klein, damit Text + Tabelle auf EINEN Blick passen */
-            --scale-factor: 0.55; 
+            /* --- EINSTELLUNGEN --- */
+            /* Skaliert den Inhalt in den Modals etwas runter, damit mehr drauf passt, 
+               aber lässt die Seite scrollen, wenn es nicht reicht. */
+            --modal-zoom: 0.85; 
 
             --primary: #007aff;
             --secondary: #5856d6;
@@ -35,7 +36,7 @@
             background: var(--bg-grad);
             width: 100vw;
             height: 100vh;
-            overflow: hidden; 
+            overflow: hidden; /* Hauptseite scrollt nicht */
             display: flex; flex-direction: column;
         }
 
@@ -49,7 +50,7 @@
 
         /* --- HEADER --- */
         header {
-            height: 10vh; /* Etwas kleiner, damit mehr Platz für Main ist */
+            height: 10vh;
             padding: 0 3vw;
             display: flex; justify-content: space-between; align-items: center;
             background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);
@@ -68,17 +69,16 @@
         }
         .lang-btn.active { background: var(--primary); color: white; transform: scale(1.05); }
 
-        /* --- MAIN GRID (Mit Platz unten!) --- */
+        /* --- MAIN GRID (VIEL PLATZ UNTEN) --- */
         main {
-            /* Wir nutzen nur 80% der Höhe, damit unten 10% Platz für Background bleiben */
-            height: 80vh; 
+            /* Nur 70% der Höhe nutzen, damit unten 20% Platz für Background ist */
+            height: 70vh; 
             width: 100vw;
             padding: 3vh 3vw;
             
-            /* Zentriert das Grid vertikal im verfügbaren Raum */
+            /* Zentriert, aber mehr oben */
             margin-top: 2vh; 
-            margin-bottom: 8vh; /* WICHTIG: Platz unten erzwingen */
-
+            
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(2, 1fr); 
@@ -117,7 +117,7 @@
         .anim-neon { animation: neonFlash 2s ease; }
         @keyframes neonFlash { 50% { border-color: var(--neon-blue); box-shadow: 0 0 4vh var(--neon-blue); } }
 
-        /* --- MODALS --- */
+        /* --- MODALS (SPLIT VIEW + PAGE SCROLL) --- */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(240, 242, 245, 0.98); backdrop-filter: blur(20px);
@@ -128,10 +128,13 @@
         }
         .modal.open { display: flex; opacity: 1; }
 
+        /* Header bleibt oben stehen */
         .modal-header {
             flex: 0 0 10vh; 
             padding: 0 3vw; background: white; border-bottom: 1px solid #ddd;
             display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            z-index: 10;
         }
         .modal-header h2 { font-size: 3vh; color: var(--primary); font-weight: 800; display: flex; align-items: center; gap: 1vw; }
         .close-btn {
@@ -139,97 +142,102 @@
             border-radius: 50px; font-weight: 800; cursor: pointer; font-size: 2vh;
         }
 
-        /* Container für den Inhalt */
-        .modal-content { 
+        /* Das hier ist der Container, der scrollt (die ganze Seite) */
+        .modal-content-scroll { 
             flex: 1; 
-            width: 100%;
-            overflow: hidden; /* Scrollen übernimmt der Wrapper */
-            display: flex; justify-content: center;
-            padding-top: 2vh; 
+            overflow-y: auto; /* Scrollen erlaubt! */
+            overflow-x: hidden;
+            padding: 4vh 4vw;
+            /* Scrollbar Styling */
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
         }
 
-        /* --- ZOOM WRAPPER --- */
-        /* Das ist der Schlüssel: Alles hier drin wird stark verkleinert */
-        .scale-wrapper {
-            /* Zoomt alles raus (kleiner machen) */
-            transform: scale(var(--scale-factor));
-            /* Ankerpunkt oben mitte, damit Untis Header nicht abgeschnitten wird */
+        /* Wrapper für Zoom & Layout */
+        .zoom-wrapper {
+            /* Wir zoomen leicht raus, um mehr Platz zu schaffen */
+            transform: scale(var(--modal-zoom));
             transform-origin: top center;
-            
-            /* Breite und Höhe kompensieren (Inverse vom Scale) */
-            width: calc(100% / var(--scale-factor)); 
-            
-            /* Wir geben viel Platz nach unten */
-            padding-bottom: 200px; 
-            
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
+            width: calc(100% / var(--modal-zoom)); /* Breite kompensieren */
+            /* Damit Scrollen funktioniert, brauchen wir keine feste Höhe, 
+               der Inhalt drückt den Container auf */
+            margin-bottom: 100px; /* Platz unten im Scrollbereich */
         }
 
-        /* INFO BOX (Text) */
-        .explain-box {
+        /* --- SPLIT LAYOUT --- */
+        .split-layout {
+            display: grid;
+            grid-template-columns: 30% 65%; /* Links Text, Rechts Inhalt */
+            gap: 5%;
+            align-items: start; /* Oben bündig */
+        }
+
+        /* Linke Seite: Info Text (Fixiert beim Scrollen wäre cool, aber auf TV lieber einfach oben) */
+        .left-info {
             background: white; padding: 40px; border-radius: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06); 
-            margin-bottom: 40px; /* Abstand zum Inhalt darunter */
-            width: 90%; max-width: 1600px;
-            text-align: center; /* Text zentriert für bessere Lesbarkeit auf TV */
-            border-top: 10px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border-left: 10px solid var(--primary);
+            position: sticky; top: 0; /* Bleibt beim Scrollen stehen wenn möglich */
         }
-        .explain-box h3 { margin-bottom: 20px; color: var(--primary); font-size: 3rem; }
-        .explain-box p { color: #444; line-height: 1.6; margin-bottom: 0; font-size: 2rem; }
+        .left-info h3 { margin-bottom: 20px; color: var(--primary); font-size: 2.5rem; line-height: 1.2; }
+        .left-info p { color: #444; line-height: 1.6; margin-bottom: 20px; font-size: 1.5rem; }
 
-        /* INHALTS-CONTAINER (Tabelle, Video etc.) */
-        /* Macht die Boxen nicht so breit, aber schön hoch */
-        .content-box-large {
-            width: 95%; max-width: 1800px;
-            background: white; border-radius: 30px;
-            padding: 40px;
+        /* Rechte Seite: Der "Dicke" Inhalt */
+        .right-content {
+            background: white;
+            border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            /* Damit Untis nicht abgeschnitten wird: */
-            overflow: visible; 
+            overflow: hidden; /* Damit Ecken rund bleiben */
+            min-height: 600px; /* Mindesthöhe */
+            /* WICHTIG: Höhe passt sich Inhalt an! */
+            height: auto; 
         }
 
-        /* UNTIS TABLE */
+        /* UNTIS TABLE OPTIMIERUNG */
+        .untis-wrapper { padding: 20px; }
         .untis-table { 
-            width: 100%; border-collapse: separate; border-spacing: 15px; 
+            width: 100%; 
+            border-collapse: separate; border-spacing: 10px; 
             table-layout: fixed; 
         }
-        .untis-table th { background: #34495e; color: white; padding: 25px; font-size: 2rem; border-radius: 15px; font-weight: 800; }
-        .untis-table td { vertical-align: top; padding: 0; height: 180px; } /* Hohe Zellen */
-        .td-time { width: 120px !important; background: transparent !important; color: #999; font-weight: 800; font-size: 2rem; padding-top: 30px !important; }
+        .untis-table th { background: #34495e; color: white; padding: 20px; font-size: 1.5rem; border-radius: 10px; }
+        .untis-table td { vertical-align: top; padding: 0; height: 160px; /* Fixe Höhe pro Zelle damit es gut aussieht */ }
+        .td-time { font-size: 1.5rem; color: #888; font-weight: 800; text-align: center; padding-top: 20px !important; }
 
         .u-block {
-            border-radius: 10px; padding: 20px; margin-bottom: 10px; 
+            border-radius: 8px; padding: 15px; margin-bottom: 5px; 
             display: flex; flex-direction: column; justify-content: center;
-            border-left-width: 10px; border-left-style: solid;
-            background: #fdfdfd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;
+            border-left-width: 8px; border-left-style: solid;
+            background: #fdfdfd; box-shadow: 0 3px 10px rgba(0,0,0,0.05); 
+            height: 100%; /* Füllt Zelle */
         }
+        .u-subj { font-weight: 800; font-size: 2rem; color: #2c3e50; }
+        .u-info { font-size: 1.4rem; color: #7f8c8d; }
+
         .st-norm { border-left-color: var(--u-gray); }
         .st-red { border-left-color: var(--u-red); background: #fff5f5; }
-        .st-orange { border-left-color: var(--u-orange); background: #fffaf0; }
         .st-green { border-left-color: var(--u-green); background: #f0fff4; }
+        .st-orange { border-left-color: var(--u-orange); background: #fffaf0; }
 
-        .u-subj { font-weight: 800; font-size: 2.5rem; color: #2c3e50; }
-        .u-info { font-size: 1.8rem; color: #7f8c8d; }
-        .cancelled { text-decoration: line-through; opacity: 0.6; }
-
-        /* VIDEO / IFRAME CONTAINER */
-        .embed-frame {
-            width: 100%; height: 900px; /* Sehr hoch damit Video groß ist */
-            border: none; border-radius: 20px;
-            background: #000;
+        /* VIDEO / IFRAME */
+        .full-frame {
+            width: 100%;
+            height: 800px; /* Quadratisch / Hoch genug */
+            border: none;
+            display: block;
         }
 
-        /* QR CODES NEBENEINANDER */
-        .qr-row { display: flex; gap: 50px; justify-content: center; width: 100%; margin-top: 20px; }
-        .qr-card { 
-            background: white; border-radius: 30px; padding: 40px; text-align: center; 
-            width: 350px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 4px solid transparent; 
+        /* QR Code Grid für Social */
+        .qr-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 40px;
         }
-        .qr-card img { height: 200px; width: 200px; object-fit: contain; margin-bottom: 20px; }
-        .qr-card h4 { font-size: 2.5rem; color: #333; }
+        .qr-card {
+            background: #f8f9fa; border-radius: 20px; padding: 30px; text-align: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 2px solid transparent; transition: 0.3s;
+        }
+        .qr-card img { width: 150px; height: 150px; object-fit: contain; margin-bottom: 20px; }
+        .qr-card h4 { font-size: 2rem; color: #333; }
 
         /* TIMEOUT */
         .timeout-layer {
@@ -319,53 +327,58 @@
             <h2><img id="img-mod-untis" src="" style="height:5vh;"> <span data-i18n="m_untis_h">WebUntis</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-content">
-            <div class="scale-wrapper">
-                <div class="explain-box">
-                    <h3 data-i18n="exp_untis_h">Dein digitaler Planer</h3>
-                    <p data-i18n="exp_untis_t1">WebUntis zeigt dir in Echtzeit, wann und wo dein Unterricht stattfindet.</p>
-                </div>
-                <div class="content-box-large">
-                    <table class="untis-table">
-                        <thead><tr><th></th><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th></tr></thead>
-                        <tbody>
-                            <tr><td class="td-time">1.</td>
-                                <td><div class="u-block st-red"><span class="u-subj cancelled">LZ</span><span class="u-info">Entfall</span></div></td>
-                                <td><div class="u-block st-red"><span class="u-subj cancelled">LZ</span><span class="u-info">Entfall</span></div></td>
-                                <td><div class="u-block st-green"><span class="u-subj">LZ</span><span class="u-info">Vertretung</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">LZ</span><span class="u-info">Regulär</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">LZ</span><span class="u-info">Regulär</span></div></td>
-                            </tr>
-                            <tr><td class="td-time">2.</td>
-                                <td><div class="u-block st-norm"><span class="u-subj">En</span><span class="u-info">R233</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Mu</span><span class="u-info">Musik</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">De</span><span class="u-info">R232</span></div></td>
-                                <td><div class="u-block st-green"><span class="u-subj">Rel</span><span class="u-info">Vrtl</span></div></td>
-                                <td><div class="u-block st-orange"><span class="u-subj">Bio</span><span class="u-info">Info!</span></div></td>
-                            </tr>
-                            <tr><td class="td-time">3.</td>
-                                <td><div class="u-block st-norm"><span class="u-subj">GW</span><span class="u-info">R234</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">BK</span><span class="u-info">R234</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">GW</span><span class="u-info">R234</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Pro</span><span class="u-info">Holz</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Ph</span><span class="u-info">Phy</span></div></td>
-                            </tr>
-                            <tr><td class="td-time">4.</td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Inf</span><span class="u-info">PC</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Ma</span><span class="u-info">R234</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Sp</span><span class="u-info">Halle</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Pro</span><span class="u-info">Holz</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Ma</span><span class="u-info">R234</span></div></td>
-                            </tr>
-                            <tr><td class="td-time">5.</td>
-                                <td><div class="u-block st-norm"><span class="u-subj">De</span><span class="u-info">R232</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Ch</span><span class="u-info">Chem</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Sp</span><span class="u-info">Halle</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">En</span><span class="u-info">R233</span></div></td>
-                                <td><div class="u-block st-norm"><span class="u-subj">Ch</span><span class="u-info">Chem</span></div></td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <div class="modal-content-scroll">
+            <div class="zoom-wrapper">
+                <div class="split-layout">
+                    <div class="left-info">
+                        <h3 data-i18n="exp_untis_h">Dein digitaler Planer</h3>
+                        <p data-i18n="exp_untis_t1">An der AHS gibt es keine Zettelwirtschaft mehr. WebUntis zeigt dir in Echtzeit, wann und wo dein Unterricht stattfindet.</p>
+                        <p data-i18n="exp_untis_t2">Die Farben helfen dir sofort zu verstehen, was los ist: <b style="color:var(--u-red)">Rot</b> bedeutet Entfall, <b style="color:var(--u-green)">Grün</b> zeigt Vertretungen oder Events an.</p>
+                    </div>
+                    <div class="right-content">
+                        <div class="untis-wrapper">
+                            <table class="untis-table">
+                                <thead><tr><th style="width:10%;"></th><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="td-time">1.</td>
+                                        <td><div class="u-block st-red"><span class="u-subj cancelled">LZ</span><span class="u-info">Entfall</span></div></td>
+                                        <td><div class="u-block st-red"><span class="u-subj cancelled">LZ</span><span class="u-info">Entfall</span></div></td>
+                                        <td><div class="u-block st-green"><span class="u-subj">LZ</span><span class="u-info">Vertretung</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">LZ</span><span class="u-info">Regulär</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">LZ</span><span class="u-info">Regulär</span></div></td>
+                                    </tr>
+                                    <tr><td class="td-time">2.</td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">En</span><span class="u-info">R233</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Mu</span><span class="u-info">Musik</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">De</span><span class="u-info">R232</span></div></td>
+                                        <td><div class="u-block st-green"><span class="u-subj">Rel</span><span class="u-info">Vrtl</span></div></td>
+                                        <td><div class="u-block st-orange"><span class="u-subj">Bio</span><span class="u-info">Info!</span></div></td>
+                                    </tr>
+                                    <tr><td class="td-time">3.</td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">GW</span><span class="u-info">R234</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">BK</span><span class="u-info">R234</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">GW</span><span class="u-info">R234</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Pro</span><span class="u-info">Holz</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Ph</span><span class="u-info">Phy</span></div></td>
+                                    </tr>
+                                    <tr><td class="td-time">4.</td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Inf</span><span class="u-info">PC</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Ma</span><span class="u-info">R234</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Sp</span><span class="u-info">Halle</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Pro</span><span class="u-info">Holz</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Ma</span><span class="u-info">R234</span></div></td>
+                                    </tr>
+                                    <tr><td class="td-time">5.</td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">De</span><span class="u-info">R232</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Ch</span><span class="u-info">Chem</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Sp</span><span class="u-info">Halle</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">En</span><span class="u-info">R233</span></div></td>
+                                        <td><div class="u-block st-norm"><span class="u-subj">Ch</span><span class="u-info">Chem</span></div></td>
+                                    </tr>
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -376,14 +389,17 @@
             <h2><img id="img-mod-tc" src="" style="height:5vh;"> <span data-i18n="m_tc_h">TaskCards</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-content">
-            <div class="scale-wrapper">
-                <div class="explain-box">
-                    <h3 data-i18n="exp_tc_h">Moderne Lernzeit (LZ)</h3>
-                    <p data-i18n="exp_tc_t1">Alle Aufgaben findest du jeden Montag digital auf TaskCards.</p>
-                </div>
-                <div class="content-box-large">
-                    <iframe id="iframe-taskcards" class="embed-frame" src=""></iframe>
+        <div class="modal-content-scroll">
+            <div class="zoom-wrapper">
+                <div class="split-layout">
+                    <div class="left-info">
+                        <h3 data-i18n="exp_tc_h">Moderne Lernzeit (LZ)</h3>
+                        <p data-i18n="exp_tc_t1">An der AHS setzen wir auf selbstständiges Lernen. Wir haben keine klassischen Hausaufgaben! Alle Aufgaben findest du jeden Montag digital auf TaskCards.</p>
+                        <p data-i18n="exp_tc_t2">TaskCards ist DSGVO-konform, sicher und kinderleicht zu bedienen. Es funktioniert wie eine digitale Pinnwand.</p>
+                    </div>
+                    <div class="right-content">
+                        <iframe id="iframe-taskcards" class="full-frame" src=""></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -394,14 +410,17 @@
             <h2><img id="img-mod-sdui" src="" style="height:5vh;"> <span data-i18n="m_sdui_h">Sdui</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-content">
-            <div class="scale-wrapper">
-                <div class="explain-box">
-                    <h3 data-i18n="exp_sdui_h">Sichere Kommunikation</h3>
-                    <p data-i18n="exp_sdui_t1">Sdui ist unser offizieller Messenger. Nachrichten werden automatisch übersetzt!</p>
-                </div>
-                <div class="content-box-large" style="width: 1200px; padding:0; overflow:hidden;">
-                    <iframe id="iframe-sdui" class="embed-frame" style="height: 700px;" src=""></iframe>
+        <div class="modal-content-scroll">
+            <div class="zoom-wrapper">
+                <div class="split-layout">
+                    <div class="left-info">
+                        <h3 data-i18n="exp_sdui_h">Sichere Kommunikation</h3>
+                        <p data-i18n="exp_sdui_t1">Wir verzichten auf WhatsApp-Gruppen. Sdui ist unser offizieller Messenger für Eltern, Schüler und Lehrer.</p>
+                        <p data-i18n="exp_sdui_t2">Nachrichten werden automatisch in Ihre Muttersprache übersetzt! Außerdem sind keine privaten Telefonnummern sichtbar.</p>
+                    </div>
+                    <div class="right-content" style="background:black; display:flex; justify-content:center; align-items:center;">
+                        <iframe id="iframe-sdui" class="full-frame" style="height: 800px; max-width:100%;" src=""></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -412,18 +431,23 @@
             <h2>Fabi & Leon <i class="fa-solid fa-circle-check" style="color:var(--verified);"></i></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-content">
-            <div class="scale-wrapper">
-                <div class="explain-box">
-                    <h3 data-i18n="fabi_about_h">Über uns</h3>
-                    <p data-i18n="fabi_about_t">Podcast & YouTube der AHS.</p>
-                    <br>
-                    <button class="lang-btn active" style="font-size:3rem; padding:20px 50px;" onclick="openFabiFullscreen()">
-                         <span data-i18n="btn_open_web">Webseite öffnen</span>
-                    </button>
-                </div>
-                <div class="fabi-qr-box" style="margin-top:20px; transform: scale(1.5);">
-                     <img id="img-fabi-modal-qr" src="" style="width:300px; height:300px;">
+        <div class="modal-content-scroll">
+            <div class="zoom-wrapper">
+                <div class="split-layout">
+                    <div class="left-info">
+                        <h3 data-i18n="fabi_about_h">Über uns</h3>
+                        <p data-i18n="fabi_about_t">Wir sind Fabi & Leon. Wir engagieren uns als stellvertretende Schülersprecher in der SV und produzieren als Content Creator den Podcast und die YouTube-Videos der AHS.</p>
+                        <br>
+                        <button class="lang-btn active" style="font-size:2rem; padding:15px 40px; width:100%; text-align:center;" onclick="openFabiFullscreen()">
+                            <i class="fa-solid fa-globe"></i> <span data-i18n="btn_open_web">Webseite öffnen</span>
+                        </button>
+                    </div>
+                    <div class="right-content" style="display:flex; justify-content:center; align-items:center; padding:50px;">
+                        <div style="text-align:center;">
+                            <img id="img-fabi-modal-qr" src="" style="width:400px; height:400px; object-fit:contain;">
+                            <h3 style="margin-top:30px; font-size:2.5rem;" data-i18n="fabi_scan_h">Scan uns!</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -434,8 +458,8 @@
             <h2>Fabi & Leon <span style="font-size:2vh; color:#888;">(Homepage)</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-content" style="padding:0;">
-            <iframe id="iframe-fabi-full" style="width:100%; height:100%; border:none;" src=""></iframe>
+        <div class="modal-content-scroll" style="padding:0;">
+            <iframe id="iframe-fabi-full" class="full-frame" style="height:100%;" src=""></iframe>
         </div>
     </div>
 
@@ -444,15 +468,19 @@
             <h2 data-i18n="m_sor_h">Schule ohne Rassismus</h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-content">
-             <div class="scale-wrapper">
-                 <div class="explain-box">
-                    <h3 data-i18n="sor_info_h">Schule mit Courage</h3>
-                    <p data-i18n="sor_info_t">Videos und Projekte zu unserem Engagement.</p>
-                </div>
-                <div class="fabi-qr-box" style="margin-top:20px; transform: scale(1.5);">
-                    <img id="img-sor-qr" src="" style="width:300px; height:300px;">
-                    <h3 style="margin-top:20px; font-size:2rem;">Scan mich</h3>
+        <div class="modal-content-scroll">
+            <div class="zoom-wrapper">
+                <div class="split-layout">
+                    <div class="left-info">
+                        <h3 data-i18n="sor_info_h">Schule mit Courage</h3>
+                        <p data-i18n="sor_info_t">Wir setzen uns aktiv gegen Rassismus ein. Hier findest du Videos und Projekte zu unserem Engagement.</p>
+                    </div>
+                    <div class="right-content" style="display:flex; justify-content:center; align-items:center; padding:50px;">
+                         <div style="text-align:center;">
+                            <img id="img-sor-qr" src="" style="width:400px; height:400px; object-fit:contain;">
+                            <h3 style="margin-top:30px; font-size:2.5rem;" data-i18n="sor_scan">Videos Scannen</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -463,8 +491,8 @@
             <h2><img id="img-mod-web" src="" style="height:5vh;"> <span data-i18n="m_web_h">Homepage</span></h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-content" style="padding:0;">
-            <iframe id="iframe-school" style="width:100%; height:100%; border:none;" src=""></iframe>
+        <div class="modal-content-scroll" style="padding:0;">
+            <iframe id="iframe-school" class="full-frame" style="height:100%;" src=""></iframe>
         </div>
     </div>
 
@@ -473,20 +501,27 @@
             <h2 data-i18n="m_soc_h">Social Media & News</h2>
             <button class="close-btn" onclick="closeAll()"><span data-i18n="btn_close">Schließen</span> <i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-content">
-            <div class="scale-wrapper">
-                <div style="display:flex; gap:50px; width:100%; max-width:1800px; height:800px;">
-                    <div style="flex:2; background:white; border-radius:30px; overflow:hidden; border:2px solid #eee;">
-                         <iframe id="iframe-rss" style="width:100%; height:100%; border:none;" src=""></iframe>
+        <div class="modal-content-scroll">
+            <div class="zoom-wrapper">
+                <div class="split-layout">
+                    <div class="right-content" style="grid-column: 1 / 2; height: 900px;">
+                        <iframe id="iframe-rss" class="full-frame" src=""></iframe>
                     </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:30px;">
-                        <div class="qr-card" style="width:100%; flex:1;">
-                            <img id="img-qr-youtube" src="">
-                            <h4>YouTube</h4>
-                        </div>
-                        <div class="qr-card" style="width:100%; flex:1;">
-                            <img id="img-qr-insta" src="">
-                            <h4>Instagram</h4>
+                    
+                    <div class="right-content" style="grid-column: 2 / 3; background:transparent; box-shadow:none; overflow:visible;">
+                        <div class="qr-grid">
+                            <div class="qr-card">
+                                <img id="img-qr-youtube" src="">
+                                <h4>YouTube</h4>
+                            </div>
+                            <div class="qr-card">
+                                <img id="img-qr-insta" src="">
+                                <h4>Instagram</h4>
+                            </div>
+                            <div class="qr-card" style="grid-column: span 2;">
+                                <img id="img-qr-spotify" src="">
+                                <h4>Spotify</h4>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -543,11 +578,11 @@
                 exp_sdui_t1: "Wir verzichten auf WhatsApp-Gruppen. Sdui ist unser offizieller Messenger für Eltern, Schüler und Lehrer. Hierüber laufen Elternbriefe, Krankmeldungen und wichtige Infos.", 
                 exp_sdui_t2: "Besonders toll: Nachrichten werden automatisch in Ihre Muttersprache übersetzt!", 
                 fabi_about_h: "Über uns", fabi_about_t: "Wir sind Fabi & Leon. Wir engagieren uns als stellvertretende Schülersprecher in der SV und produzieren als Content Creator den Podcast und die YouTube-Videos der AHS.", 
-                fabi_scan_h: "Scanne unsere Kanäle", 
+                fabi_scan_h: "Scan uns!", 
                 btn_open_web: "Webseite öffnen", 
                 m_sor_h: "Schule ohne Rassismus", sor_info_h: "Schule mit Courage", 
                 sor_info_t: "Wir setzen uns aktiv gegen Rassismus ein. Hier findest du Videos und Projekte zu unserem Engagement.", 
-                sor_scan: "Videos mitnehmen", 
+                sor_scan: "Videos Scannen", 
                 m_web_h: "Homepage", m_soc_h: "Social Media & News", 
                 sub_yt: "Videos", sub_insta: "Fotos", sub_spot: "Podcast", 
                 time_h: "Bist du noch da?", time_t: "Der Bildschirm wird gleich zurückgesetzt.", 
@@ -573,11 +608,11 @@
                 exp_sdui_t1: "We do not use WhatsApp groups. Sdui is our official messenger for parents, students, and teachers. Letters to parents, sick notes, and important info run through here.", 
                 exp_sdui_t2: "Especially great: Messages are automatically translated into your native language!", 
                 fabi_about_h: "About Us", fabi_about_t: "We are Fabi & Leon. We are committed as deputy head students in the SV and produce the podcast and YouTube videos of AHS as Content Creators.", 
-                fabi_scan_h: "Scan our channels", 
+                fabi_scan_h: "Scan us!", 
                 btn_open_web: "Open Website", 
                 m_sor_h: "School w/o Racism", sor_info_h: "School with Courage", 
                 sor_info_t: "We actively stand against racism. Here you can find videos and projects about our commitment.", 
-                sor_scan: "Take videos with you", 
+                sor_scan: "Scan Videos", 
                 m_web_h: "Website", m_soc_h: "Social Media & News", 
                 sub_yt: "Videos", sub_insta: "Photos", sub_spot: "Podcast", 
                 time_h: "Are you still there?", time_t: "The screen will reset shortly.", 
